@@ -18,12 +18,18 @@ const Login = ({ setUserType }) => {
 
     // Store role in localStorage
     localStorage.setItem("userType", role);
+    localStorage.setItem("userEmail", email);
     setUserType(role); // Update global user type
 
     // Redirect based on user role
-    if (role === "freelancer") navigate("/freelancer-dashboard");
-    else if (role === "client") navigate("/client-dashboard");
-    else if (role === "admin") navigate("/admin-panel");
+    if (role === "freelancer") {
+      navigate("/freelancer/dashboard");
+    } else if (role === "client") {
+      navigate("/client/my-jobs");
+    } else if (role === "admin") {
+      navigate("/admin/manage-users");
+    }
+    
   };
 
   return (

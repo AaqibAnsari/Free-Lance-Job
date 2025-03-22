@@ -10,8 +10,13 @@ import FreelancerProfile from "./pages/Freelancer/Profile";
 import PostJob from "./pages/Client/PostJob";
 import FindJobs from "./pages/Freelancer/FindJobs.js";
 import BiddingSystem from "./pages/Freelancer/BiddingSystem";
+import FreelancerReviews from "./pages/Freelancer/Reviews";
 import ReviewProposals from "./pages/Client/ReviewProposals";
 import Chat from "./components/Chat";
+import MyProposals from "./pages/Freelancer/MyProposals"; 
+import ManageJobs from "./pages/Client/ManageJobs";
+import ManageAdminJobs from "./pages/Admin/ManageJobs";
+import ManageUsers from "./pages/Admin/ManageUsers";
 
 
 const App = () => {
@@ -48,10 +53,15 @@ const AppContent = ({ userType, setUserType }) => {
         <Route path="/freelancer/dashboard" element={<FreelancerDashboard />} />
         <Route path="/profile-creation" element={<ProfileCreation />} />
         <Route path="/freelancer/profile" element={<FreelancerProfile />} />
+        <Route path="/freelancer/reviews" element={<FreelancerReviews />} /> 
         <Route path="/client/post-job" element={<PostJob />} />        
+        <Route path="/client/my-jobs" element={<ManageJobs />} />
         <Route path="/freelancer/find-jobs" element={<FindJobs />} />
         <Route path="/freelancer/bidding" element={<BiddingSystem />} />
+        <Route path="/freelancer/my-proposals" element={<MyProposals />} />
         <Route path="/Client/ReviewProposals" element={<ReviewProposals />} />
+        <Route path="/admin/manage-users" element={<ManageUsers />} />
+        <Route path="/admin/manage-jobs" element={<ManageAdminJobs />} />
         <Route path="/chat" element={<Chat />} />
       </Routes>
     </>

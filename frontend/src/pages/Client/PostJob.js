@@ -16,10 +16,25 @@ const PostJob = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Send jobData to backend API (Implement API call here)
-    console.log("Job Posted:", jobData);
+    // Get current jobs from localStorage or initialize empty array
+    const storedJobs = JSON.parse(localStorage.getItem("jobs")) || [];
+
+    // Add new job to the jobs array
+    storedJobs.push(jobData);
+
+    // Save updated jobs to localStorage
+    localStorage.setItem("jobs", JSON.stringify(storedJobs));
 
     alert("Job posted successfully!");
+
+    // Clear the form after posting
+    setJobData({
+      title: "",
+      description: "",
+      budget: "",
+      deadline: "",
+      category: "",
+    });
   };
 
   return (

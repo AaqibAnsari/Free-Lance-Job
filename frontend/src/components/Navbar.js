@@ -15,7 +15,7 @@ const Navbar = ({ userType }) => {
           {/* **Freelancer Links** */}
           {userType === "freelancer" && (
             <>
-              <li><Link to="/freelancer/dashboard">Dashboard</Link></li>
+            <Link to="/freelancer/dashboard">Dashboard</Link>
               <li><Link to="/freelancer/find-jobs">Find Jobs</Link></li>
               <li><Link to="/freelancer/my-proposals">My Proposals</Link></li>
               <li><Link to="/freelancer/messages">Messages</Link></li>
@@ -33,7 +33,6 @@ const Navbar = ({ userType }) => {
           {/* **Client Links** */}
           {userType === "client" && (
             <>
-              <li><Link to="/client/dashboard">Dashboard</Link></li>
               <li><Link to="/client/post-job">Post a Job</Link></li>
               <li><Link to="/client/my-jobs">My Jobs</Link></li>
               <li><Link to="/client/ReviewProposals">Review Proposals</Link></li>
@@ -52,10 +51,10 @@ const Navbar = ({ userType }) => {
           {/* **Admin Links** */}
           {userType === "admin" && (
             <>
-              <li><Link to="/admin/dashboard">Admin Dashboard</Link></li>
+              
               <li><Link to="/admin/manage-users">Manage Users</Link></li>
               <li><Link to="/admin/manage-jobs">Manage Jobs</Link></li>
-              <li><Link to="/admin/reports">Reports</Link></li>
+             
 
               <li style={styles.dropdown}>
                 <Link to="/admin/settings">Settings ▼</Link>
