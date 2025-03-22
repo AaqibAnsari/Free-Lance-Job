@@ -1,0 +1,93 @@
+/* Center the register form */
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f8f9fa;
+}
+
+/* Box styling */
+.register-box {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+/* Headings */
+.register-box h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.register-box p {
+  font-size: 14px;
+  color: #6c757d;
+  margin-bottom: 1.5rem;
+}
+
+/* Input fields */
+.input-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  outline: none;
+}
+
+.input-group select {
+  background-color: #fff;
+  cursor: pointer;
+}
+
+/* Signup Button */
+.register-btn {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.register-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Login link */
+.login-link {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.login-link a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .register-box {
+    width: 90%;
+    padding: 1.5rem;
+  }
+}
