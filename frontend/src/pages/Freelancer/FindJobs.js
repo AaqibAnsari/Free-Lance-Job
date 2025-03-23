@@ -14,16 +14,45 @@ const FindJobs = () => {
   };
 
   return (
-    <div>
-      <h2>Find Jobs</h2>
+    <div style={{ 
+        display: "flex", 
+        flexDirection: "column", 
+        alignItems: "center", 
+        justifyContent: "center", 
+        minHeight: "100vh", 
+        textAlign: "center",
+        padding: "20px"
+    }}>
+      <h2 style={{ marginBottom: "20px" }}>Find Jobs</h2>
+
       {jobs.map((job) => (
-        <div key={job.id} style={{ border: "1px solid #ddd", padding: "10px", margin: "10px 0", borderRadius: "5px" }}>
+        <div 
+          key={job.id} 
+          style={{ 
+            border: "1px solid #ddd", 
+            padding: "15px", 
+            borderRadius: "8px", 
+            width: "100%", 
+            maxWidth: "400px", 
+            background: "#f9f9f9",
+            marginBottom: "15px",
+            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)"
+          }}
+        >
           <h3>{job.title}</h3>
           <p>{job.description}</p>
           <p><strong>Budget:</strong> ${job.budget}</p>
           <button
             onClick={() => setSelectedJob(job.id)}
-            style={{ background: "green", color: "white", padding: "8px", border: "none", cursor: "pointer" }}
+            style={{ 
+              background: "green", 
+              color: "white", 
+              padding: "8px 15px", 
+              border: "none", 
+              borderRadius: "5px", 
+              cursor: "pointer",
+              marginTop: "10px"
+            }}
           >
             Bid on This Job
           </button>

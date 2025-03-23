@@ -18,7 +18,8 @@ const Navbar = ({ userType }) => {
             <Link to="/freelancer/dashboard">Dashboard</Link>
               <li><Link to="/freelancer/find-jobs">Find Jobs</Link></li>
               <li><Link to="/freelancer/my-proposals">My Proposals</Link></li>
-              <li><Link to="/freelancer/messages">Messages</Link></li>
+              <li><Link to="/chat">Chat</Link></li>
+
 
               <li style={styles.dropdown}>
                 <Link to="/freelancer/profile">Profile ▼</Link>
