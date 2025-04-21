@@ -8,29 +8,49 @@ const Login = ({ setUserType }) => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-
+  
     if (!email || !password) {
       setError("Please enter valid credentials.");
       return;
     }
+  
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, role }),
+      });
+  
+      const data = await response.json();
+  //    const data = await response.json();
+console.log("Login response:", data); // 👈 Add this
 
-    // Store role in localStorage
-    localStorage.setItem("userType", role);
-    localStorage.setItem("userEmail", email);
-    setUserType(role); // Update global user type
-
-    // Redirect based on user role
-    if (role === "freelancer") {
-      navigate("/freelancer/dashboard");
-    } else if (role === "client") {
-      navigate("/client/my-jobs");
-    } else if (role === "admin") {
-      navigate("/admin/manage-users");
+  
+      if (response.ok) {
+        // Save in localStorage or use JWT in future
+        localStorage.setItem("userType", data.user.role);
+        localStorage.setItem("userId", data.user.id); // ✅ store userId (Mongo _id)
+        localStorage.setItem("userEmail", data.user.email);
+        setUserType(data.user.role);
+  
+        // Navigate based on role
+        if (role === "freelancer") {
+          navigate("/freelancer/dashboard");
+        } else if (role === "client") {
+          navigate("/client/my-jobs");
+        } else if (role === "admin") {
+          navigate("/admin/manage-users");
+        }
+      } else {
+        setError(data.message || "Login failed");
+      }
+    } catch (err) {
+      setError("Something went wrong. Try again later.");
     }
-    
   };
+  
 
   return (
     <div style={styles.container}>

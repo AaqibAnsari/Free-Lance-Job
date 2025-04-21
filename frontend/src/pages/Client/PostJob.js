@@ -13,29 +13,45 @@ const PostJob = () => {
     setJobData({ ...jobData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Get current jobs from localStorage or initialize empty array
-    const storedJobs = JSON.parse(localStorage.getItem("jobs")) || [];
-
-    // Add new job to the jobs array
-    storedJobs.push(jobData);
-
-    // Save updated jobs to localStorage
-    localStorage.setItem("jobs", JSON.stringify(storedJobs));
-
-    alert("Job posted successfully!");
-
-    // Clear the form after posting
-    setJobData({
-      title: "",
-      description: "",
-      budget: "",
-      deadline: "",
-      category: "",
-    });
+  
+    // Get clientId from localStorage (saved during login)
+    const clientId = localStorage.getItem("userId");
+    console.log(clientId);
+  
+    // Merge jobData with clientId
+    const payload = {
+      ...jobData,
+      clientId, // This links the job to the client in MongoDB
+    };
+  
+    try {
+      const response = await fetch("http://localhost:5000/api/jobs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        alert("Job posted successfully!");
+        setJobData({
+          title: "",
+          description: "",
+          budget: "",
+          deadline: "",
+          category: "",
+        });
+      } else {
+        alert(data.message || "Failed to post job.");
+      }
+    } catch (err) {
+      alert("Server error. Try again later.");
+    }
   };
+  
 
   return (
     <div style={styles.container}>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const BiddingSystem = ({ jobId }) => {
+const BiddingSystem = ({ jobId, onBidSubmit }) => {
   const [bidAmount, setBidAmount] = useState("");
   const [proposal, setProposal] = useState("");
   const [proposals, setProposals] = useState([]);
@@ -30,13 +30,16 @@ const BiddingSystem = ({ jobId }) => {
 
     const updatedProposals = [bidData, ...proposals];
 
-    // Store updated proposals in localStorage
+    // Store updated proposals in localStorage (or send to backend)
     localStorage.setItem("proposals", JSON.stringify(updatedProposals));
     setProposals(updatedProposals);
 
     alert("Bid Submitted Successfully!");
     setBidAmount("");
     setProposal("");
+
+    // Call parent method to increment bid count in backend
+    onBidSubmit({ jobId, bidAmount });
   };
 
   return (

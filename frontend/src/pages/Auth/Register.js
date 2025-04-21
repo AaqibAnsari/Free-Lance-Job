@@ -11,37 +11,50 @@ const Register = ({ setUserType }) => {
 
   const navigate = useNavigate();
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-
-    // Validate form fields
+  
     if (!fullName || !email || !password || !confirmPassword || !userType) {
       alert("All fields are required!");
       return;
     }
-
+  
     if (password !== confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
-
-    // Convert role to lowercase for consistency
-    const normalizedUserType = userType.toLowerCase();
-
-    // Store user type in localStorage
-    localStorage.setItem("userType", normalizedUserType);
-    setUserType(normalizedUserType); // Update global user type
-
-    // Redirect based on user type
-    if (normalizedUserType === "freelancer") {
-      navigate("/profile-creation"); // Freelancers must create a profile
-    } else if (normalizedUserType === "client") {
-      navigate("/client-dashboard");
-    } else if (normalizedUserType === "admin") {
-      navigate("/admin-dashboard");
+  
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName,
+          email,
+          password,
+          role: userType
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        alert("Signup successful!");
+        if (userType === "freelancer") {
+          navigate("/profile-creation");
+        } else if (userType === "client") {
+          navigate("/client-dashboard");
+        } else {
+          navigate("/admin-dashboard");
+        }
+      } else {
+        alert(data.message || "Signup failed");
+      }
+    } catch (err) {
+      alert("Something went wrong. Try again later.");
     }
   };
-
+  
   return (
     <div className="register-container">
       <div className="register-box">
