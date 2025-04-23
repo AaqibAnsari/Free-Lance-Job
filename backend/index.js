@@ -16,7 +16,7 @@ mongoose.connect(process.env.MONGO_URI)
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/profile', require('./routes/freelancerRoutes'));
 app.use('/api/jobs', require('./routes/jobRoutes'));
-
+app.use('/api/proposals',require('./routes/proposalRoutes'))
 // Default route
 app.get('/', (req, res) => res.json({ message: 'API Working!' }));
 
