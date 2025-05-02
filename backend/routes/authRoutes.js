@@ -72,4 +72,19 @@ router.post("/login", async (req, res) => {
   }
 });
 
+
+router.get("/freelancer", async (req, res) => {
+  try {
+    const { email } = req.query; // Get email from query string
+    const freelancer = await User.findOne({ email });
+
+    if (!freelancer) {
+      return res.status(404).json({ message: "Freelancer not found" });
+    }
+
+    res.json({ freelancerId: freelancer._id });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 module.exports = router;

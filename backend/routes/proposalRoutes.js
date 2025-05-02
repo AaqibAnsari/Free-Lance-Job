@@ -69,5 +69,60 @@ router.get("/freelancer/:freelancerId", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+router.get("/client/:clientId", async (req, res) => {
+  console.log("Proposals for client route hit");
+  try {
+    const { clientId } = req.params;
+    // 1a) find all jobs for this client
+    const jobs = await Job.find({ clientId }).select("_id title description budget deadline");
+    const jobIds = jobs.map(j => j._id);
+
+    // 1b) find all proposals whose job is in that list
+    const proposals = await Proposal
+      .find({ job: { $in: jobIds } })
+      .populate("freelancer", "fullName email")
+      .populate("job", "_id");     // so we know proposal.job._id
+
+    res.json({ jobs, proposals });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ------------------------------------------------------------------
+// 2) Accept / Reject by proposalId
+//    POST /api/proposals/:proposalId/accept
+//    POST /api/proposals/:proposalId/reject
+// ------------------------------------------------------------------
+router.post("/:proposalId/accept", async (req, res) => {
+  try {
+    const { proposalId } = req.params;
+    const prop = await Proposal.findById(proposalId);
+    if (!prop) return res.status(404).json({ message: "Not found" });
+    prop.status = "Accepted";
+    await prop.save();
+    // decrement bidCount on job
+    await Job.findByIdAndUpdate(prop.job, { $inc: { bidCount: -1 } });
+    res.json({ message: "Accepted", proposal: prop });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+router.post("/:proposalId/reject", async (req, res) => {
+  try {
+    const { proposalId } = req.params;
+    const prop = await Proposal.findById(proposalId);
+    if (!prop) return res.status(404).json({ message: "Not found" });
+    prop.status = "Rejected";
+    await prop.save();
+    res.json({ message: "Rejected", proposal: prop });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 module.exports = router;

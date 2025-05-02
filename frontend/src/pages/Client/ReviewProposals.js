@@ -1,106 +1,86 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 
 const ReviewProposals = () => {
-  const { jobId } = useParams(); // Get job ID from URL
-  const [proposals, setProposals] = useState([
-    // ✅ Default proposals
-    { _id: "1", freelancerName: "Alice Johnson", amount: 450, coverLetter: "I have 5+ years of experience in web development." },
-    { _id: "2", freelancerName: "Bob Smith", amount: 500, coverLetter: "Expert in React & Node.js, ready to start immediately!" }
-  ]);
+  const [jobs, setJobs] = useState([]);
+  const [proposalsByJob, setProposalsByJob] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  const clientId = localStorage.getItem("userId");
 
   useEffect(() => {
-    // Fetch proposals for this job
-    fetch(`/api/jobs/${jobId}/proposals`)
-      .then((res) => res.json())
-      .then((data) => setProposals((prev) => [...prev, ...data])) // ✅ Append new proposals
-      .catch((error) => console.error("Error fetching proposals:", error));
-  }, [jobId]);
+    if (!clientId) return;
 
-  // Accept Proposal
-  const handleAccept = (proposalId) => {
-    fetch(`/api/jobs/${jobId}/proposals/${proposalId}/accept`, { method: "POST" })
+    const ts = Date.now();
+    // fetch jobs & proposals in parallel
+    Promise.all([
+      fetch(`http://localhost:5000/api/jobs/client?clientId=${clientId}&_=${ts}`).then(r=>r.json()),
+      fetch(`http://localhost:5000/api/proposals/client/${clientId}?_=${ts}`).then(r=>r.json())
+    ])
+    .then(([jobsData, { jobs: _, proposals }]) => {
+      setJobs(jobsData);
+      // group proposals by jobId
+      const grouped = proposals.reduce((acc, p) => {
+        const jid = p.job._id.toString();
+        if (!acc[jid]) acc[jid] = [];
+        acc[jid].push(p);
+        return acc;
+      }, {});
+      setProposalsByJob(grouped);
+    })
+    .catch(console.error)
+    .finally(() => setLoading(false));
+  }, [clientId]);
+
+  const updateStatus = (proposalId, action) => {
+    fetch(`http://localhost:5000/api/proposals/${proposalId}/${action}`, { method: "POST" })
+      .then(res => res.json())
       .then(() => {
-        alert("Proposal accepted!");
-        setProposals((prev) => prev.filter((p) => p._id !== proposalId));
+        setProposalsByJob(prev => {
+          // remove that proposal from whichever job array it was in
+          const copy = { ...prev };
+          Object.keys(copy).forEach(jid => {
+            copy[jid] = copy[jid].filter(p => p._id !== proposalId);
+          });
+          return copy;
+        });
       })
-      .catch((error) => console.error("Error accepting proposal:", error));
+      .catch(console.error);
   };
 
-  // Reject Proposal
-  const handleReject = (proposalId) => {
-    fetch(`/api/jobs/${jobId}/proposals/${proposalId}/reject`, { method: "POST" })
-      .then(() => {
-        alert("Proposal rejected.");
-        setProposals((prev) => prev.filter((p) => p._id !== proposalId));
-      })
-      .catch((error) => console.error("Error rejecting proposal:", error));
-  };
+  if (loading) return <div>Loading…</div>;
+
+  if (!jobs.length) return <p>No jobs for this client.</p>;
 
   return (
-    <div style={{ 
-        display: "flex", 
-        flexDirection: "column", 
-        alignItems: "center", 
-        justifyContent: "center", 
-        minHeight: "100vh", 
-        textAlign: "center", 
-        padding: "20px" 
-    }}>
-      <h2 style={{ marginBottom: "20px" }}>Review Proposals</h2>
+    <div style={{ padding: 20 }}>
+      <h2>Review Proposals</h2>
+      {jobs.map(job => {
+        const ps = proposalsByJob[job._id] || [];
+        return (
+          <div key={job._id} style={{ border: "1px solid #ccc", margin: "1em 0", padding: "1em", borderRadius: 8 }}>
+            <h3>{job.title}</h3>
+            <p><strong>Description:</strong> {job.description}</p>
+            <p><strong>Budget:</strong> ${job.budget}</p>
+            <p><strong>Deadline:</strong> {new Date(job.deadline).toLocaleDateString()}</p>
 
-      {proposals.length === 0 ? (
-        <p>No proposals yet.</p>
-      ) : (
-        <ul style={{ listStyleType: "none", padding: 0, width: "100%", maxWidth: "500px" }}>
-          {proposals.map((proposal) => (
-            <li 
-              key={proposal._id} 
-              style={{ 
-                border: "1px solid #ddd", 
-                padding: "15px", 
-                marginBottom: "10px", 
-                borderRadius: "8px", 
-                background: "#f9f9f9",
-                boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)"
-              }}
-            >
-              <h3>{proposal.freelancerName}</h3>
-              <p><strong>Bid:</strong> ${proposal.amount}</p>
-              <p><strong>Cover Letter:</strong> {proposal.coverLetter}</p>
-              <div style={{ marginTop: "10px" }}>
-                <button 
-                  onClick={() => handleAccept(proposal._id)} 
-                  style={{ 
-                    marginRight: "10px", 
-                    backgroundColor: "green", 
-                    color: "white", 
-                    padding: "8px 12px",
-                    borderRadius: "5px",
-                    border: "none",
-                    cursor: "pointer"
-                  }}
-                >
-                  Accept
-                </button>
-                <button 
-                  onClick={() => handleReject(proposal._id)} 
-                  style={{ 
-                    backgroundColor: "red", 
-                    color: "white", 
-                    padding: "8px 12px",
-                    borderRadius: "5px",
-                    border: "none",
-                    cursor: "pointer"
-                  }}
-                >
-                  Reject
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+            {ps.length === 0
+              ? <p>No proposals yet.</p>
+              : (
+                <ul style={{ listStyle: "none", padding: 0 }}>
+                  {ps.map(p => (
+                    <li key={p._id} style={{ marginBottom: "1em", padding: "0.5em", border: "1px solid #ddd", borderRadius: 6 }}>
+                      <p><strong>{p.freelancer.fullName}</strong> (${p.bidAmount})</p>
+                      <p>{p.proposalText}</p>
+                      <button onClick={() => updateStatus(p._id, "accept")} style={{ marginRight: 8 }}>Accept</button>
+                      <button onClick={() => updateStatus(p._id, "reject")}>Reject</button>
+                    </li>
+                  ))}
+                </ul>
+              )
+            }
+          </div>
+        );
+      })}
     </div>
   );
 };
