@@ -41,7 +41,7 @@ const Register = ({ setUserType }) => {
       if (response.ok) {
         alert("Signup successful!");
         if (userType === "freelancer") {
-          navigate("/profile-creation");
+          navigate("/profile");
         } else if (userType === "client") {
           navigate("/client-dashboard");
         } else {

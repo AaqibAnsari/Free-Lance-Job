@@ -14,9 +14,11 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Importing routes
 app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/profile', require('./routes/freelancerRoutes'));
+//app.use('/api/profile', require('./routes/freelancerRoutes'));
+app.use('/api/freelancer', require('./routes/frRoutes'));
 app.use('/api/jobs', require('./routes/jobRoutes'));
 app.use('/api/proposals',require('./routes/proposalRoutes'))
+app.use('/api/gemini', require('./routes/gemini'));
 // Default route
 app.get('/', (req, res) => res.json({ message: 'API Working!' }));
 

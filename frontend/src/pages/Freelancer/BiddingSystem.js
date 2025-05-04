@@ -36,6 +36,13 @@ const BiddingSystem = ({ jobId, onBidSubmit }) => {
       alert("Please enter a bid amount, proposal, and make sure you're logged in as a freelancer.");
       return;
     }
+    const checkRes = await fetch(`http://localhost:5000/api/proposals/check?jobId=${jobId}&freelancerId=${freelancerId}`);
+    const checkData = await checkRes.json();
+  
+    if (checkData.exists) {
+      alert("You have already submitted a proposal for this job.Please wait for the client to respond.");
+      return;
+    }
   
     const bidData = {
       jobId,

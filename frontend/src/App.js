@@ -17,6 +17,7 @@ import MyProposals from "./pages/Freelancer/MyProposals";
 import ManageJobs from "./pages/Client/ManageJobs";
 import ManageAdminJobs from "./pages/Admin/ManageJobs";
 import ManageUsers from "./pages/Admin/ManageUsers";
+import SavedJobs from "./pages/Freelancer/BookmarkedJobs.js";
 
 
 const App = () => {
@@ -57,6 +58,7 @@ const AppContent = ({ userType, setUserType }) => {
         <Route path="/client/post-job" element={<PostJob />} />        
         <Route path="/client/my-jobs" element={<ManageJobs />} />
         <Route path="/freelancer/find-jobs" element={<FindJobs />} />
+        <Route path="/freelancer/saved-jobs" element={<SavedJobs />} /> {/* Reusing FindJobs for saved jobs */}
         <Route path="/freelancer/bidding" element={<BiddingSystem />} />
         <Route path="/freelancer/my-proposals" element={<MyProposals />} />
         <Route path="/Client/ReviewProposals" element={<ReviewProposals />} />

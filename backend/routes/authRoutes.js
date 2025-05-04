@@ -2,7 +2,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
-
+const FreelancerProfile = require("../models/FreelancerProfile"); // Assuming you have a FreelancerProfile model
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
@@ -13,10 +13,15 @@ router.post("/register", async (req, res) => {
   }
 
   try {
+    // Check if email already exists
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(409).json({ message: "Email already exists" });
+    if (existingUser)
+      return res.status(409).json({ message: "Email already exists" });
 
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create user
     const newUser = new User({
       fullName,
       email,
@@ -24,10 +29,27 @@ router.post("/register", async (req, res) => {
       role: role.toLowerCase(),
     });
 
-    await newUser.save();
+    const savedUser = await newUser.save();
 
-    res.status(201).json({ message: "User registered successfully", user: newUser });
+    // If role is freelancer, create an empty FreelancerProfile linked to this user
+    if (savedUser.role === "freelancer") {
+      console.log("Creating FreelancerProfile for user:", savedUser._id);
+      const newProfile = new FreelancerProfile({
+        _id: savedUser._id,  // Use _id directly as userId
+        githubLink: "",
+        linkedinLink: "",
+        bio: "",
+        resumePdf: "",
+        profilePhoto: ""
+      });
+
+      await newProfile.save();
+    }
+
+    res.status(201).json({ message: "User registered successfully", user: savedUser });
+
   } catch (err) {
+    console.error("Registration error:", err);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 });

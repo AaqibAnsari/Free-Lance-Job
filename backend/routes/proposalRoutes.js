@@ -3,6 +3,10 @@ const Proposal = require("../models/Proposal");
 const Job = require("../models/Job");
 const router = express.Router();
 
+
+// GET /api/proposals/check?jobId=xyz&freelancerId=abc
+
+
 // POST - Submit a new proposal
 router.post("/", async (req, res) => {
     console.log("Proposal route hit");
@@ -22,7 +26,25 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+router.get("/check", async (req, res) => {
+  const { jobId, freelancerId } = req.query;
 
+  if (!jobId || !freelancerId) {
+    return res.status(400).json({ message: "jobId and freelancerId are required" });
+  }
+
+  try {
+    const existing = await Proposal.findOne({ job: jobId, freelancer: freelancerId });
+    if (existing) {
+      return res.status(200).json({ exists: true });
+    } else {
+      return res.status(200).json({ exists: false });
+    }
+  } catch (err) {
+    console.error("Error checking existing proposal:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+});
 
 router.get("/:freelancerId", async (req, res) => {
     console.log("Proposals get route hit");
