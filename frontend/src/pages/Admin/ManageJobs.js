@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const ManageJobs = () => {
-  // Default job data (in case no jobs are stored in localStorage)
   const defaultJobs = [
     {
       title: "Frontend Developer",
@@ -23,9 +22,21 @@ const ManageJobs = () => {
   const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
-    // Get jobs from localStorage or initialize with default jobs
-    const storedJobs = JSON.parse(localStorage.getItem('jobs')) || defaultJobs;
-    setJobs(storedJobs);
+    const fetchJobs = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/jobs");
+        if (!response.ok) {
+          throw new Error("Failed to fetch jobs");
+        }
+        const data = await response.json();
+        setJobs(data);
+      } catch (err) {
+        console.error("Error fetching jobs from API, loading defaults:", err);
+        setJobs(defaultJobs);
+      }
+    };
+
+    fetchJobs();
   }, []);
 
   return (
@@ -80,11 +91,6 @@ const styles = {
     marginBottom: '15px',
     borderRadius: '5px',
     boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-    transition: 'transform 0.2s, box-shadow 0.2s',
-  },
-  jobItemHover: {
-    transform: 'scale(1.05)',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.15)',
   },
   jobDetails: {
     display: 'flex',

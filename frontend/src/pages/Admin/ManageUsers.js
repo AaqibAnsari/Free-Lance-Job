@@ -1,84 +1,59 @@
 import React, { useState, useEffect } from 'react';
 
 const ManageUsers = () => {
-  // Default users with Pakistani names
-  const defaultUsers = [
-    {
-      id: 1,
-      name: 'Ali Khan',
-      email: 'alikhan@example.com',
-      role: 'Admin',
-      userType: 'Freelancer',
-    },
-    {
-      id: 2,
-      name: 'Sara Ahmed',
-      email: 'saraahmed@example.com',
-      role: 'User',
-      userType: 'Client',
-    },
-    {
-      id: 3,
-      name: 'Bilal Malik',
-      email: 'bilalmalik@example.com',
-      role: 'User',
-      userType: 'Freelancer',
-    },
-    {
-      id: 4,
-      name: 'Ayesha Iqbal',
-      email: 'ayeshaiqbal@example.com',
-      role: 'Admin',
-      userType: 'Client',
-    },
-  ];
-
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      // Retrieve userType and userEmail from localStorage
-      const storedUserType = localStorage.getItem('userType');
-      const storedUserEmail = localStorage.getItem('userEmail');
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/auth/');
+        const data = await response.json();
 
-      let storedUsers = [];
+        // Format each user for display
+        const formattedUsers = data.map((user, index) => ({
+          id: user._id || index,
+          name: user.fullName || 'Unnamed',
+          email: user.email,
+          role: user.role || 'User',
+          userType: user.role === 'admin' ? 'Admin' : 'Freelancer',
+        }));
 
-      if (storedUserType && storedUserEmail) {
-        // Add the logged-in user from localStorage
-        storedUsers.push({
-          id: defaultUsers.length + 1, // Unique ID
-          name: 'Logged User', // Placeholder name
-          email: storedUserEmail,
-          role: storedUserType,
-          userType: storedUserType === 'admin' ? 'Admin' : 'Freelancer',
-        });
+        setUsers(formattedUsers);
+      } catch (error) {
+        console.error('Failed to fetch users:', error);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      // Combine default users with stored user
-      setUsers([...defaultUsers, ...storedUsers]);
-    } catch (e) {
-      console.error('Error retrieving user data from localStorage:', e);
-      setUsers(defaultUsers);
-    }
+    fetchUsers();
   }, []);
 
   return (
     <div style={styles.container}>
       <h2 style={styles.heading}>Manage Users</h2>
-      <ul style={styles.userList}>
-        {users.length > 0 ? (
-          users.map((user) => (
-            <li key={user.id} style={styles.userItem}>
-              <div style={styles.userDetails}>
-                <strong style={styles.userName}>{user.name}</strong> ({user.email}) - <span style={styles.userRole}>{user.role}</span>
-              </div>
-              <div style={styles.userType}>User Type: <span style={styles.userTypeValue}>{user.userType}</span></div>
-            </li>
-          ))
-        ) : (
-          <p style={styles.noUsers}>No users available.</p>
-        )}
-      </ul>
+      {loading ? (
+        <p style={styles.noUsers}>Loading users...</p>
+      ) : (
+        <ul style={styles.userList}>
+          {users.length > 0 ? (
+            users.map((user) => (
+              <li key={user.id} style={styles.userItem}>
+                <div style={styles.userDetails}>
+                  <strong style={styles.userName}>{user.name}</strong> ({user.email}) -{' '}
+                  <span style={styles.userRole}>{user.role}</span>
+                </div>
+                <div style={styles.userType}>
+                  User Type: <span style={styles.userTypeValue}>{user.userType}</span>
+                </div>
+              </li>
+            ))
+          ) : (
+            <p style={styles.noUsers}>No users available.</p>
+          )}
+        </ul>
+      )}
     </div>
   );
 };

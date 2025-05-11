@@ -109,20 +109,7 @@ const Navbar = ({ userType }) => {
                       <span>Proposals</span>
                     </Link>
                   </li>
-                  <li style={styles.dropdown}>
-                    <Link to="/client/profile" style={styles.navLink}>
-                      <span style={styles.linkIcon}>👤</span>
-                      <span>Profile ▼</span>
-                    </Link>
-                    <ul style={styles.dropdownMenu}>
-                      <li style={styles.dropdownItem}>
-                        <Link to="/client/edit-profile" style={styles.dropdownLink}>
-                          Edit Profile
-                        </Link>
-                      </li>
-
-                    </ul>
-                  </li>
+                 
                                         <li style={styles.navItem}>
                         <button onClick={handleLogout} style={styles.logoutButton}>
                           Logout
@@ -148,10 +135,7 @@ const Navbar = ({ userType }) => {
                     </Link>
                   </li>
                   <li style={styles.dropdown}>
-                    <Link to="/admin/settings" style={styles.navLink}>
-                      <span style={styles.linkIcon}>⚙️</span>
-                      <span>Settings ▼</span>
-                    </Link>
+                   
                     <ul style={styles.dropdownMenu}>
                       <li style={styles.dropdownItem}>
                         <Link to="/admin/profile" style={styles.dropdownLink}>
