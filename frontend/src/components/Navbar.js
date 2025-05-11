@@ -76,13 +76,15 @@ const Navbar = ({ userType }) => {
                           Edit Profile
                         </Link>
                       </li>
-                      <li style={styles.dropdownItem}>
-                        <button onClick={handleLogout} style={styles.logoutButton}>
-                          Logout
-                        </button>
-                      </li>
+                      
                     </ul>
                   </li>
+                   <li style={styles.navItem}>
+                        <button onClick={handleLogout} style={styles.logoutButton}>
+                          Logout
+
+                        </button>
+                      </li>
                 </>
               )}
 
@@ -118,13 +120,15 @@ const Navbar = ({ userType }) => {
                           Edit Profile
                         </Link>
                       </li>
-                      <li style={styles.dropdownItem}>
-                        <button onClick={handleLogout} style={styles.logoutButton}>
-                          Logout
-                        </button>
-                      </li>
+
                     </ul>
                   </li>
+                                        <li style={styles.navItem}>
+                        <button onClick={handleLogout} style={styles.logoutButton}>
+                          Logout
+
+                        </button>
+                      </li>
                 </>
               )}
 
@@ -154,13 +158,14 @@ const Navbar = ({ userType }) => {
                           Profile
                         </Link>
                       </li>
-                      <li style={styles.dropdownItem}>
+                     
+                    </ul>
+                  </li>
+                   <li style={styles.navItem}>
                         <button onClick={handleLogout} style={styles.logoutButton}>
                           Logout
                         </button>
-                      </li>
-                    </ul>
-                  </li>
+                   </li>
                 </>
               )}
             </ul>
